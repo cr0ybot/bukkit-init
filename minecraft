@@ -48,13 +48,7 @@ as_user() {
 	fi
 }
 datepath() {
-	# datepath path filending-to-check returned-filending
-	if [ -e $1`date +%x`$2 ]
-	then
-		echo $1`date +%FT%T`$3
-	else
-		echo $1`date +%F`$3
-	fi
+	echo $1`date +%FT%T`$3
 }
 mc_start() {
 	if ps ax | grep -v grep | grep -v -i SCREEN | grep $SERVICE > /dev/null

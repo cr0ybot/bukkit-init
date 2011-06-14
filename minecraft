@@ -21,18 +21,18 @@ SERVICE='craftbukkit-0.0.1-SNAPSHOT.jar'
 # User that should run the server
 USERNAME="v"
 # Path to minecraft directory 
-MCPATH="/home/${USERNAME}/mine"
+MCPATH="/home/${USERNAME}/server"
 CPU_COUNT=2
 # Change the values of -Xmx###M and -Xms###M to how much ram you want to give to the
 # server. Remember to give the ramdisk enough space. Subtract from the total amount 
 # of RAM available the size of your map and the RAM-consumption of your base system.
 INVOCATION="java -Xmx760M -Xms760M -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalPacing -XX:ParallelGCThreads=$CPU_COUNT -XX:+AggressiveOpts -jar $SERVICE nogui"
 # Where the world backups should go
-BACKUPPATH="/home/${USERNAME}/world.backups"
+BACKUPPATH="/home/${USERNAME}/backups/world"
 # Where the logs are copied when running log-roll 
-LOGPATH="$/home/${USERNAME}/logs"
+LOGPATH="/home/${USERNAME}/backups/logs"
 # Where the whole minecraft directory is copied when whole-backup is runned
-WHOLEBACKUP="/home/${USERNAME}/server.backups"
+WHOLEBACKUP="/home/${USERNAME}/backups/server"
 # Where the world is located on the disk
 WORLDSTORAGE="/home/${USERNAME}/server/diskworld"
 #Path to the the mounted ramdisk default in Ubuntu: /dev/shm
@@ -118,7 +118,7 @@ mc_stop() {
 }
 log_roll() {
         echo "Rolling minecraft server logs"
-	path=`datepath $MCPATH/logs/server_ .log.gz .log`
+	path=`datepath $LOGPATH/logs/server_ .log.gz .log`
 	as_user "mv $MCPATH/server.log $path && gzip $path"
 }
 mc_whole_backup() {

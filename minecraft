@@ -210,12 +210,13 @@ case "$1" in
                 #update minecraft_server.jar and craftbukkit.jar
                 as_user "screen -p 0 -S minecraft -X eval 'stuff \"say SERVER REBOOT/UPDATE IN 10 SECONDS.\"\015'"
                 mc_stop
+		to_disk
                 mc_whole_backup
                 mc_update
                 mc_start
                 ;;
 	backup)
-		# Backups world
+		# Backup world
 		as_user "screen -p 0 -S minecraft -X eval 'stuff \"say Backing up world.\"\015'"
 		mc_saveoff
 		to_disk
@@ -224,7 +225,7 @@ case "$1" in
 		as_user "screen -p 0 -S minecraft -X eval 'stuff \"say Backup complete.\"\015'"
 		;;
 	whole-backup)
-		# Backups everything
+		# Backup everything
 		mc_saveoff
 		to_disk
 		mc_whole_backup

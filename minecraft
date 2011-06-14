@@ -214,7 +214,10 @@ case "$1" in
 		;;
 	whole-backup)
 		# Backups everything
+		mc_saveoff
+		to_disk
 		mc_whole_backup
+		mc_saveon
 		;;
 	to-disk)
 		# Writes from the ramdisk to disk, in case the server crashes. 

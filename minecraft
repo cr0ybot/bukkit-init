@@ -117,10 +117,12 @@ mc_stop() {
 	fi
 }
 log_roll() {
+        echo "Rolling minecraft server logs"
 	path=`datepath $MCPATH/logs/server_ .log.gz .log`
 	as_user "mv $MCPATH/server.log $path && gzip $path"
 }
 mc_whole_backup() {
+        echo "Backing up minecraft server folder"
 	path=`datepath $WHOLEBACKUP/mine_`
 	as_user "cp -r $MCPATH $path"
 }
@@ -253,7 +255,7 @@ case "$1" in
 		;;
 
 	*)
-		echo "Usage: /etc/init.d/minecraft {start|stop|backup|whole-backup|log-roll|to-disk|connected|status|restart}"
+		echo "Usage: /etc/init.d/minecraft {start|stop|backup|whole-backup|update|log-roll|to-disk|connected|status|restart}"
 		exit 1
 		;;
 esac

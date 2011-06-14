@@ -159,6 +159,7 @@ mc_update() {
                                 if `diff $MCPATH/minecraft_server.jar $MCPATH/minecraft_server.jar.update >/dev/null`
                                         then    
                                         echo "You are already running the latest version of the Minecraft server."
+                                        as_user "rm $MCPATH/minecraft_server.jar.update"
                                 else    
                                         as_user "mv $MCPATH/minecraft_server.jar.update $MCPATH/minecraft_server.jar"
                                         echo "Minecraft successfully updated."
@@ -175,6 +176,7 @@ mc_update() {
                                 if `diff $MCPATH/craftbukkit-0.0.1-SNAPSHOT.jar $MCPATH/craftbukkit.jar.update > /dev/null`
                                         then    
                                         echo "You are already running the latest version of CraftBukkit."
+                                        as_user "rm $MCPATH/craftbukkit.jar.update"
                                 else    
                                         as_user "mv $MCPATH/craftbukkit.jar.update $MCPATH/craftbukkit-0.0.1-SNAPSHOT.jar"
                                         echo "CraftBukkit successfully updated."

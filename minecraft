@@ -121,9 +121,17 @@ mc_whole_backup() {
 	as_user "cp -r $MCPATH $path"
 }
 mc_world_backup() {
+	TODAY=`date +%F`
+	if [ ! -e $BACKUPPATH/$TODAY ]
+		then
+		as_user "mkdir $BACKUPPATH/$TODAY"
+	fi
 	echo "Backing up minecraft world"
-	path=`datepath $BACKUPPATH/world_ .tar.bz2 .tar.bz2`
+	path=`datepath $BACKUPPATH/$TODAY/world_ .tar.bz2 .tar.bz2`
 	as_user "tar -hcjf $path $MCPATH/world"
+	echo "Backing up nether world"
+	path=`datepath $BACKUPPATH/$TODAY/world_nether_ .tar.bz2 .tar.bz2`
+	as_user "tar -hcjf $path $MCPATH/world_nether"
 }
 to_ram() {
 	if [ -L $MCPATH/world ]
@@ -208,6 +216,7 @@ case "$1" in
 		# Backups world
 		as_user "screen -p 0 -S minecraft -X eval 'stuff \"say Backing up world.\"\015'"
 		mc_saveoff
+		to_disk
 		mc_world_backup
 		mc_saveon
 		as_user "screen -p 0 -S minecraft -X eval 'stuff \"say Backup complete.\"\015'"

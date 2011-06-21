@@ -134,10 +134,15 @@ mc_world_backup() {
 	as_user "tar -hcjf $path $MCPATH/world_nether"
 }
 to_ram() {
-	if [ -L $MCPATH/world ]
+	if ps ax | grep -v grep | grep -v -i SCREEN | grep $SERVICE > /dev/null
 	then
-		as_user "rsync -rt $WORLDSTORAGE/ $RAMDISK/world"
-		echo "World copied to ram"
+		echo "Cannot copy to ram, $SERVICE is currently running!"
+	else
+		if [ -L $MCPATH/world ]
+		then
+			as_user "rsync -rt $WORLDSTORAGE/ $RAMDISK/world"
+			echo "World copied to ram"
+		fi
 	fi
 }
 to_disk() {

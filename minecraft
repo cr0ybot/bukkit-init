@@ -10,33 +10,33 @@
 # Default-Start:  2 3 4 5
 # Default-Stop:   0 1 6
 # Short-Description:    Minecraft server
-# Description:    Init script for minecraft/bukkit server, with rolling logs and use of ramdisk for less lag. 
+# Description:    Init script for minecraft/bukkit server, with rolling logs and use of ramdisk for less lag.
 ### END INIT INFO
 
 ### Based on http://www.minecraftwiki.net/wiki/Server_startup_script
 
 
 # Name of server.jar file
-SERVICE='craftbukkit-0.0.1-SNAPSHOT.jar'
+SERVICE='craftbukkit.jar'
 # User that should run the server
-USERNAME="v"
-# Path to minecraft directory 
+USERNAME="minecraft"
+# Path to minecraft directory
 MCPATH="/home/${USERNAME}/server"
 CPU_COUNT=2
 # Change the values of -Xmx###M and -Xms###M to how much ram you want to give to the
-# server. Remember to give the ramdisk enough space. Subtract from the total amount 
+# server. Remember to give the ramdisk enough space. Subtract from the total amount
 # of RAM available the size of your map and the RAM-consumption of your base system.
-INVOCATION="java -Xmx760M -Xms760M -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalPacing -XX:ParallelGCThreads=$CPU_COUNT -XX:+AggressiveOpts -jar $SERVICE nogui"
+INVOCATION="java -Xmx1536M -Xincgc -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalPacing -XX:ParallelGCThreads=$CPU_COUNT -XX:+AggressiveOpts -jar $SERVICE nogui"
 # Where the world backups should go
 BACKUPPATH="/home/${USERNAME}/backups/world"
-# Where the logs are copied when running log-roll 
+# Where the logs are copied when running log-roll
 LOGPATH="/home/${USERNAME}/backups/logs"
 # Where the whole minecraft directory is copied when whole-backup is runned
 WHOLEBACKUP="/home/${USERNAME}/backups/server"
 # Where the world is located on the disk
 WORLDSTORAGE="/home/${USERNAME}/server/diskworld"
 #Path to the the mounted ramdisk default in Ubuntu: /dev/shm
-RAMDISK='/dev/shm'
+RAMDISK="/home/${USERNAME}/ramdisk"
 
 
 ME=`whoami`
@@ -56,7 +56,6 @@ mc_start() {
 		echo "Tried to start but $SERVICE was already running!"
 	else
 		echo "$SERVICE was not running... starting."
-		# rsync -tr $MCPATH/world-disc /dev/shm/
 		cd $MCPATH
 		as_user "cd $MCPATH && screen -dmS minecraft $INVOCATION"
 		sleep 7
@@ -110,9 +109,9 @@ mc_stop() {
 		echo "$SERVICE is shut down."
 	fi
 }
-log_roll() {
+mc_log_roll() {
         echo "Rolling minecraft server logs"
-	path=`datepath $LOGPATH/logs/server_ .log.gz .log`
+	path=`datepath $LOGPATH/server_ .log.gz .log`
 	as_user "mv $MCPATH/server.log $path && gzip $path"
 }
 mc_whole_backup() {
@@ -126,35 +125,70 @@ mc_world_backup() {
 		then
 		as_user "mkdir $BACKUPPATH/$TODAY"
 	fi
-	echo "Backing up minecraft world"
+	echo "Backing up Minecraft world"
 	path=`datepath $BACKUPPATH/$TODAY/world_ .tar.bz2 .tar.bz2`
 	as_user "tar -hcjf $path $MCPATH/world"
-	echo "Backing up nether world"
+	echo "Backing up Nether world"
 	path=`datepath $BACKUPPATH/$TODAY/world_nether_ .tar.bz2 .tar.bz2`
 	as_user "tar -hcjf $path $MCPATH/world_nether"
+	echo "Backing up The End world"
+	path=`datepath $BACKUPPATH/$TODAY/world_the_end_ .tar.bz2 .tar.bz2`
+	as_user "tar -hcjf $path $MCPATH/world_the_end"
 }
 to_ram() {
 	if ps ax | grep -v grep | grep -v -i SCREEN | grep $SERVICE > /dev/null
 	then
 		echo "Cannot copy to ram, $SERVICE is currently running!"
 	else
-		if [ -L $MCPATH/world ]
-		then
-			as_user "rsync -rt $WORLDSTORAGE/ $RAMDISK/world"
-			echo "World copied to ram"
-		fi
-		if [ -L $MCPATH/world_nether ]
-		then
-			as_user "rsync -rt $WORLDSTORAGE/ $RAMDISK/world_nether"
-			echo "Nether copied to ram"
+		if [ ! -f "$RAMDISK/world/level.dat" ]
+			then
+			if [ ! -d "$RAMDISK/world" ]
+				then
+				as_user "mkdir $RAMDISK/world"
+				echo "Created world dir in ramdisk"
+			fi
+			if [ ! -d "$RAMDISK/world_nether" ]
+				then
+				as_user "mkdir $RAMDISK/world_nether"
+				echo "Created world_nether dir in ramdisk"
+			fi
+			if [ ! -d "$RAMDISK/world_the_end" ]
+				then
+				as_user "mkdir $RAMDISK/world_the_end"
+				echo "Created world_the_end dir in ramdisk"
+			fi
+			if [ -L $MCPATH/world ]
+				then
+				as_user "rsync -rt $WORLDSTORAGE/world/ $RAMDISK/world"
+				echo "World copied to ram"
+			fi
+			if [ -L $MCPATH/world_nether ]
+				then
+				as_user "rsync -rt $WORLDSTORAGE/world_nether/ $RAMDISK/world_nether"
+				echo "Nether copied to ram"
+			fi
+			if [ -L $MCPATH/world_the_end ]
+				then
+				as_user "rsync -rt $WORLDSTORAGE/world_the_end/ $RAMDISK/world_the_end"
+				echo "The End copied to ram"
+			fi
+		else
+			echo "Ramdisk not empty. Nothing copied to ram. If there are issues, manually erase ramdisk."
 		fi
 	fi
 }
 to_disk() {
-	as_user "rsync -rt $MCPATH/world/ $WORLDSTORAGE"
-	echo "World copied to disk"
-	as_user "rsync -rt $MCPATH/world_nether/ $WORLDSTORAGE"
-	echo "Nether copied to disk"
+	if [ "$MCPATH/world/level.dat" -nt "$WORLDSTORAGE/world/level.dat" ]
+		then
+		as_user "rsync -rt $MCPATH/world/ $WORLDSTORAGE/world"
+		echo "World copied to disk"
+		as_user "rsync -rt $MCPATH/world_nether/ $WORLDSTORAGE/world_nether"
+		echo "Nether copied to disk"
+		as_user "rsync -rt $MCPATH/world_the_end/ $WORLDSTORAGE/world_the_end"
+		echo "The End copied to disk"
+	else
+		echo "Ramdisk files older than harddisk files. Nothing copied to harddisk."
+	fi
 }
 
 mc_update() {
@@ -167,15 +201,15 @@ mc_update() {
 		MC_SERVER_URL=http://minecraft.net/`wget -q -O - http://www.minecraft.net/download.jsp | grep minecraft_server.jar\</a\> | cut -d \" -f 2`
 		as_user "cd $MCPATH && wget -q -O $MCPATH/minecraft_server.jar.update $MC_SERVER_URL"
 		if [ -f $MCPATH/minecraft_server.jar.update ]
-			then    
+			then
 			if `diff $MCPATH/minecraft_server.jar $MCPATH/minecraft_server.jar.update >/dev/null`
-				then    
+				then
 				echo "You are already running the latest version of the Minecraft server."
 				as_user "rm $MCPATH/minecraft_server.jar.update"
 			else
 				as_user "mv $MCPATH/minecraft_server.jar.update $MCPATH/minecraft_server.jar"
 				echo "Minecraft successfully updated."
-			fi      
+			fi
 		else
 			echo "Minecraft update could not be downloaded."
 		fi
@@ -183,15 +217,15 @@ mc_update() {
 		### update craftbukkit
 
 		echo "Updating craftbukkit...."
-		as_user "cd $MCPATH && wget -q -O $MCPATH/craftbukkit.jar.update http://ci.bukkit.org/job/dev-CraftBukkit/promotion/latest/Recommended/artifact/target/craftbukkit-0.0.1-SNAPSHOT.jar"
+		as_user "cd $MCPATH && wget -q -O $MCPATH/craftbukkit.jar.update http://dl.bukkit.org/latest-rb/craftbukkit.jar"
 		if [ -f $MCPATH/craftbukkit.jar.update ]
 			then
-			if `diff $MCPATH/craftbukkit-0.0.1-SNAPSHOT.jar $MCPATH/craftbukkit.jar.update > /dev/null`
+			if `diff $MCPATH/$SERVICE $MCPATH/craftbukkit.jar.update > /dev/null`
 				then
 				echo "You are already running the latest version of CraftBukkit."
 				as_user "rm $MCPATH/craftbukkit.jar.update"
 			else
-				as_user "mv $MCPATH/craftbukkit.jar.update $MCPATH/craftbukkit-0.0.1-SNAPSHOT.jar"
+				as_user "mv $MCPATH/craftbukkit.jar.update $MCPATH/$SERVICE"
 				echo "CraftBukkit successfully updated."
 			fi
 		else
@@ -266,9 +300,9 @@ case "$1" in
 	log-roll)
 		# Moves and Gzips the logfile, a big log file slows down the
 		# server A LOT (what was notch thinking?)
-		as_user "screen -p 0 -S minecraft -X eval 'stuff \"say ROUTINE REBOOT IN 10 SECONDS.\"\015'"
+		as_user "screen -p 0 -S minecraft -X eval 'stuff \"say ROUTINE REBOOT IN 10 SECONDS. BACK IN 30 SECONDS.\"\015'"
 		mc_stop
-		log_roll 
+		mc_log_roll
 		mc_start
 		;;
 	status)

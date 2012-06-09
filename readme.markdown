@@ -1,27 +1,23 @@
 Initscript for minecraft/bukkit servers
 =======================================
-A good start if you plan to run a minecraft server using Linux.
-Moving this scriptfile to /etc/init.d will start the minecraftserver at boot.
+Place the minecraft file in /etc/init.d to start the minecraft server at boot.
 
-The initscript will make the server use a ramdisk to contain the world.
-Ramdisk is a part of the ram mounted as a disk and will speed up the
-server especially if you've enabled teleportation. It also has the
-ability to backup and clean the server.log. A big logfile slows down the
-server alot.
+This script places the world files on a ramdisk to speed up server read/write times. It also has a log-roll function to backup and clean the server.log, as a big logfile can slow down the server.
 
 
 Requirements
 ------------
-screen,rsync
+screen, rsync
 
 Access server console
 ---------------------
 
 	screen -r minecraft
 
-Exit the console
-	
-	Ctrl+A D
+Exit server console
+-------------------
+
+	Ctrl+A,D
 
 Setup
 =====
@@ -31,27 +27,46 @@ Setup
 		chmod 755 /etc/init.d/minecraft
 		update-rc.d minecraft defaults
 
-2. Mount a ramdisk or use the one premounted at `/dev/shm/`
+2. Mount a ramdisk (I use `/home/minecraft/ramdisk`) or use the one premounted at `/dev/shm/`
 
-3. Rename your world dir to diskworld and symlink the ramdisk in instead.
+3. Move your world dir to a new dir named `diskworld` and symlink `world` to the ramdisk instead.
 
-		cd ~/minecraft
-		mv world diskworld
-		ln -s /dev/shm/world world
+		cd /home/minecraft/server
+		mkdir diskworld
+		mv world diskworld/world
+		ln -s /home/minecraft/ramdisk/world world 
 
-4. Create the log directory
+4. Create the backups directory
 
+		cd /home/minecraft
+		mkdir backups
+		cd backups
 		mkdir logs
+		mkdir server
+		mkdir world
 
-5. Edit crontab
+5. Edit crontab to do a backup at 5am and copy the world from the ramdisk every 10 minutes
 
 		sudo crontab -e
 
 	and add these lines
 
 		#m 	h 	dom	mon	dow	command
-		02 	05 	*	*	*	/etc/init.d/minecraft backup
-		55 	04 	*	*	*	/etc/init.d/minecraft log-roll
-		*/30 	* 	*	*	*	/etc/init.d/minecraft to-disk
+		05 	05 	*	*	*	/etc/init.d/minecraft backup
+		00 	05 	*	*	*	/etc/init.d/minecraft log-roll
+		*/10 	* 	*	*	*	/etc/init.d/minecraft to-disk
 
-6. Edit the variables in the scriptfile to your needs
+6. Make sure permissions on ALL files and folders in /home/minecraft are open to the `minecraft` user
+
+		cd /home/minecraft/server
+		ls -al
+
+	for any file that does NOT say `minecraft` in the 3rd and 4th colums, do
+
+		chown minecraft:minecraft [FILE NAME]
+
+	and for any folder, do
+
+		chown -R minecraft:minecraft [FOLDER NAME]
+
+7. Edit the variables in the scriptfile to your needs

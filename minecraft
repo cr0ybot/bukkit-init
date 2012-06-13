@@ -404,7 +404,7 @@ case "$1" in
 		;;
 	say)
 		# executes say command on the server console
-		if [ $* -gt 1 ]; then
+		if [ $# -gt 1 ]; then
 			shift
 			mc_command "say $*"
 		else

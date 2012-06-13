@@ -109,7 +109,7 @@ Available commands:
 + command - _expects input: executes a Minecraft server command, see_ http://www.minecraftwiki.net/wiki/SMP_Server_commands
 + log-roll - _"rolls" the server.log file, wiping it clean and storing the old log in `backups/logs`_
 + status - _check if server is running or not_
-+ version - _displays version of server (needs updating since changing log-roll function)_
++ version - _displays version of server_
 
 
 `Tested on Ubuntu 12.04 server; may work on Debian`

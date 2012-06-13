@@ -439,7 +439,13 @@ case "$1" in
 		fi
 		;;
 	version)
-		echo Craftbukkit version `awk '/Craftbukkit/ {sub(/\)/, ""); print $12}' $MCPATH/server.log`
+		#echo Craftbukkit version `awk '/Craftbukkit/ {sub(/\)/, ""); print $12}' $MCPATH/server.log`
+		if is_running; then
+			as_user "screen -p 0 -S $USERNAME -X eval 'stuff \"version\"\015'"
+			tac $MCPATH/server.log | grep -o -m 1 "This server is running.*"
+		else
+			echo "$SERVICE must be running to check version."
+		fi
         	;;
 	*)
 		echo "Usage: /etc/init.d/minecraft {start|stop|restart|backup|whole-backup|update|to-disk|connected|last|console|say|command|log-roll|status|version}"

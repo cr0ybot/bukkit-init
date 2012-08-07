@@ -1,0 +1,5 @@
+1.2.1
+	Split up update function since you might want to update only CraftBukkit or Minecraft
+
+1.2.0
+	Lots of changes based on Karrth's changes to the script found on the Minecraft Wiki

@@ -100,7 +100,9 @@ Available commands:
 + restart - _restarts the server_
 + backup - _backs up your Minecraft world to the `backups/world` directory_
 + whole-backup - _backs up the entire `server` folder to `backups/server`_
-+ update - _attempts to update_ minecraft.jar _and_ craftbukkit.jar
++ update-all - _attempts to update_ minecraft.jar _and_ craftbukkit.jar
++ update-mc - _attempts to update_ minecraft.jar
++ update-cb - _attempts to update_ craftbukkit.jar
 + to-disk - _copies the world files from the ramdisk to the harddisk, so that if the server crashes or reboots, the files can be transferred back to the ramdisk (RAM does not hold data when power is off)_
 + connected - _lists currently connected playeres_
 + last - _lists all connect/disconnect activity since the last log-roll_

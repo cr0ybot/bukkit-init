@@ -1,6 +1,6 @@
 #!/bin/bash
 # /etc/init.d/minecraft
-# version 1.2.0 2012-06-11 (YYYY-MM-DD)
+# version 1.2.1 2012-08-06 (YYYY-MM-DD) by cr0ybot
 
 ### BEGIN INIT INFO
 # Provides:   minecraft
@@ -286,7 +286,14 @@ mc_update() {
 		else
 			echo "Minecraft update could not be downloaded."
 		fi
+	fi
+}
 
+cb_update() {
+	if is_running
+		then
+			echo "$SERVICE is running! Will not start update."
+	else
 		### update craftbukkit
 		echo "Updating craftbukkit...."
 		as_user "cd $MCPATH && wget -q -O $MCPATH/craftbukkit.jar.update http://dl.bukkit.org/latest-rb/craftbukkit.jar"
@@ -337,15 +344,34 @@ case "$1" in
 			echo "$SERVICE not running. Cannot restart."
 		fi
 		;;
-        update)
-                #update minecraft_server.jar and craftbukkit.jar
-                as_user "screen -p 0 -S $USERNAME -X eval 'stuff \"say SERVER REBOOT/UPDATE IN 10 SECONDS.\"\015'"
-                mc_stop
+	update-all)
+		#update minecraft_server.jar and craftbukkit.jar
+		as_user "screen -p 0 -S $USERNAME -X eval 'stuff \"say SERVER REBOOT/UPDATE IN 10 SECONDS.\"\015'"
+		mc_stop
 		to_disk
-                mc_whole_backup
-                mc_update
-                mc_start
-                ;;
+		mc_whole_backup
+		mc_update
+		cb_update
+		mc_start
+		;;
+	update-mc)
+		#update minecraft_server.jar
+		as_user "screen -p 0 -S $USERNAME -X eval 'stuff \"say SERVER REBOOT/UPDATE IN 10 SECONDS.\"\015'"
+		mc_stop
+		to_disk
+		mc_whole_backup
+		mc_update
+		mc_start
+		;;
+	update-cb)
+		#update craftbukkit.jar
+		as_user "screen -p 0 -S $USERNAME -X eval 'stuff \"say SERVER REBOOT/UPDATE IN 10 SECONDS.\"\015'"
+		mc_stop
+		to_disk
+		mc_whole_backup
+		cb_update
+		mc_start
+		;;
 	backup)
 		# Backup world
 		if is_running; then
@@ -446,7 +472,7 @@ case "$1" in
 		else
 			echo "$SERVICE must be running to check version."
 		fi
-        	;;
+		;;
 	*)
 		echo "Usage: /etc/init.d/minecraft {start|stop|restart|backup|whole-backup|update|to-disk|connected|last|console|say|command|log-roll|status|version}"
 		exit 1

@@ -474,7 +474,7 @@ case "$1" in
 		fi
 		;;
 	*)
-		echo "Usage: /etc/init.d/minecraft {start|stop|restart|backup|whole-backup|update|to-disk|connected|last|console|say|command|log-roll|status|version}"
+		echo "Usage: /etc/init.d/minecraft {start|stop|restart|backup|whole-backup|update-all|update-mc|update-cb|to-disk|connected|last|console|say|command|log-roll|status|version}"
 		exit 1
 		;;
 esac

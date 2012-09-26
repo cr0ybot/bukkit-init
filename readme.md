@@ -36,6 +36,8 @@ Then, run:
 
 ...and follow the on-screen instructions!
 
+__IMPORTANT:__ After that's done, you'll have to add the cron jobs manually so that things are properly backed up on a schedule. Follow step 7 in "Manual Setup" below.
+
 If you want full control over your setup, see "Manual Setup" below.
 
 Manual Setup

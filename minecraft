@@ -9,15 +9,14 @@
 # Should-Stop:		$network
 # Default-Start:	2 3 4 5
 # Default-Stop:		0 1 6
-# Short-Description: Minecraft server
-# Description:		Init script for Minecraft servers on Ubuntu/Debian,
-#					compatible with vanilla and CraftBukkit.
+# Short-Description: Bukkit Minecraft server
+# Description:		Init script for Bukkit Minecraft servers on Ubuntu/Debian
 #					Features rolling logs and use of ramdisk for less lag.
 ### END INIT INFO
 
 # == COPYRIGHT ================================================================
-# Version 1.3 (2012-09-10), Copyright (C) 2012
-# Author: cr0ybot (https://github.com/cr0ybot/minecraft-init)
+# Version 1.3.1 (2012-11-10), Copyright (C) 2012
+# Author: cr0ybot (https://github.com/cr0ybot/bukkit-init)
 
 #   This script is free software: you can redistribute it and/or modify it 
 #   under the terms of the GNU General Public License as published by the 
@@ -51,14 +50,11 @@
 # https://github.com/cr0ybot/minecraft-init
 
 # Name of server (not critical, just makes output neater)
-SERVERNAME='Minecraft Server'
+SERVERNAME='Bukkit Server'
 # Name of server jar file
-# If using CraftBukkit, rename jar file to 'craftbukkit.jar'
-# If using vanilla Minecraft server, use 'minecraft_server.jar'
 SERVICE='craftbukkit.jar'
 # URL for downloading service updates.
 # CraftBukkit recommended build URL is http://dl.bukkit.org/latest-rb/craftbukkit.jar
-# If using vanilla Minecraft server, URL is https://s3.amazonaws.com/MinecraftDownload/launcher/minecraft_server.jar (as of 9/9/12)
 UPDATE_URL='http://dl.bukkit.org/latest-rb/craftbukkit.jar'
 # User that should run the server (default is 'minecraft')
 USERNAME='minecraft'

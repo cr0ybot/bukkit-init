@@ -1,3 +1,9 @@
+## 1.3.1 (2012-11-10)
+
+Forked from minecraft-init, focus is now on Bukkit-only servers.
+
+	* Removed notes from readme and script about setting script up for vanilla Minecraft
+
 ## 1.3.0 (2012-09-18)
 
 An almost total rewrite of the script.

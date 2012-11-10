@@ -1,6 +1,6 @@
-Initscript for Minecraft servers on Ubuntu
+Initscript for Bukkit Minecraft servers on Ubuntu
 ==========================================
-This is a script for starting a single-world Minecraft server at boot, and comes with a bunch of other features that make maintaining a server fairly simple.
+This is a script for starting a single-world Bukkit server at boot, and comes with a bunch of other features that make maintaining a server fairly simple.
 
 Features
 --------
@@ -10,7 +10,7 @@ Features
 + Op commands (add, remove, and display). (NEW in 1.3.0)
 + Choose to use a ramdisk to speed up server read/write times to the world files. 
 + Specify max RAM the server process should use.
-+ Stop, start, restart, and update the server (Minecraft & CraftBukkit) with simple console commands.
++ Stop, start, restart, and update the server with simple console commands.
 + See who is currently connected, and all connects/disconnects since the last log-roll.
 + Easily push a message to people playing on the server.
 + Use Minecraft server commands without opening the server console screen.
@@ -23,7 +23,7 @@ screen, rsync
 
 Easy Setup
 ----------
-New in version 1.3.0 is the ability to set up a Minecraft server in minutes!
+New in version 1.3.0 is the ability to set up a Bukkit server in minutes!
 
 First, install the script by placing it in `/etc/init.d/` as `minecraft` and run these commands:
 

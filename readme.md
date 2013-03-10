@@ -68,11 +68,9 @@ Manual Setup
 
 	I'm setting my ramdisk up with 512MB, which is more than enough for my 43MB total world files; you may wish to use more or less. _Make sure you have enough RAM for this!_
 
-	The ramdisk will mount every time you boot. If you wish to mount it immediately, use:
+	The ramdisk will mount every time you boot. For the first time you have to mount it manually:
 
-		sudo mount -t tmpfs none /home/minecraft/ramdisk -o size=512m
-
-	...otherwise you must reboot now before continuing.
+		sudo mount /home/minecraft/ramdisk
 
 	See http://www.minecraftwiki.net/wiki/Tutorials/Ramdisk_enabled_server for more info on ramdisks.
 
